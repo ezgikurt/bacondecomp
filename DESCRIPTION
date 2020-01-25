@@ -1,7 +1,7 @@
 Package: bacondecomp
 Type: Package
 Title: Goodman-Bacon Decomposition
-Version: 0.1.1
+Version: 0.1.2.9000
 Authors@R: c(
   person("Evan", "Flack", email = "evanjflack@gmail.com",
          role = c("aut", "cre")),
