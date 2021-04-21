@@ -13,6 +13,9 @@
 #' @param data a data.frame containing the variables in the model.
 #' @param id_var character, the name of id variable for units.
 #' @param time_var character, the name of time variable.
+#' 
+#' @param interact_var character, the name of the variable that's in interaction with time
+#' 
 #' @param quietly logical, default = FALSE, if set to TRUE then bacon() does not
 #'  print the summary of estimates/weights by type (e.g. Treated vs Untreated)
 #'
@@ -47,7 +50,8 @@ bacon <- function(formula,
                   data,
                   id_var,
                   time_var, 
-                  quietly = F) {
+                  quietly = F,
+                  interact_var = "") {
   # Evaluate formula in data environment
   formula <- formula(terms
                      (formula, data = data))
@@ -57,7 +61,8 @@ bacon <- function(formula,
   outcome_var <- vars$outcome_var
   treated_var <- vars$treated_var
   control_vars <- vars$control_vars
-  data <- rename_vars(data, id_var, time_var, outcome_var, treated_var)
+  interact_var <- vars$interact_var
+  data <- rename_vars(data, id_var, time_var, outcome_var, treated_var, interact_var)
   
   # Check for NA observations
   nas <- sum(is.na(data[, c("id", "time", "outcome", "treated")]))
@@ -93,6 +98,10 @@ bacon <- function(formula,
       weight <- calculate_weights(data = data1,
                                   treated_group = treated_group,
                                   untreated_group = untreated_group)
+      
+      if(!is.null(interact_var)){
+        data1 <- data1 %>% group_by(time, interact) %>% mutate(time = cur_group_id()) %>% ungroup
+      }
       estimate <- lm(outcome ~ treated + factor(time) + factor(id),
                      data = data1)$coefficients[2]
 
@@ -192,14 +201,18 @@ unpack_variable_names <- function(formula) {
 #' @param outcome_var character, name of outcome variable
 #' @param treated_var character, name of binary treatment variable
 #'
+#' @param interact_var character, name of time interaction variable 
 #' @return A data.frame with renamed columns
 #'
 #' @noRd
-rename_vars <- function(data, id_var, time_var, outcome_var, treated_var) {
+rename_vars <- function(data, id_var, time_var, outcome_var, treated_var, interact_var) {
   colnames(data)[colnames(data) == id_var] <- "id"
   colnames(data)[colnames(data) == time_var] <- "time"
   colnames(data)[colnames(data) == outcome_var] <- "outcome"
   colnames(data)[colnames(data) == treated_var] <- "treated"
+  if(!is.null(interact_var)){
+    colnames(data)[colnames(data) == interact_var] <- "interact"
+  }
   return(data)
 }
 
