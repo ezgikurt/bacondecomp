@@ -61,7 +61,6 @@ bacon <- function(formula,
   outcome_var <- vars$outcome_var
   treated_var <- vars$treated_var
   control_vars <- vars$control_vars
-  interact_var <- vars$interact_var
   data <- rename_vars(data, id_var, time_var, outcome_var, treated_var, interact_var)
   
   # Check for NA observations
