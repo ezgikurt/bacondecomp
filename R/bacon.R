@@ -245,7 +245,7 @@ create_treatment_groups <- function(data, control_vars,
     # Create data.frame of all posible 2x2 estimates. Dyads may appear twice as
     # treatment groups can play the roll of both earlier and later treated
     two_by_twos <- expand.grid(unique(data$treat_time),
-                               unique(data$treat_time))
+                               unique(data$treat_time), stringsAsFactors = FALSE)
     colnames(two_by_twos) <- c("treated", "untreated")
     two_by_twos <- two_by_twos[!(two_by_twos$treated ==
                                  two_by_twos$untreated), ]
