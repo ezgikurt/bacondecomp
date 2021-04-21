@@ -14,7 +14,8 @@
 #' @param id_var character, the name of id variable for units.
 #' @param time_var character, the name of time variable.
 #' 
-#' @param interact_var character, the name of the variable that's in interaction with time
+#' @param interact_var character, default = NULL, the name of the variable 
+#' that's in interaction with time
 #' 
 #' @param quietly logical, default = FALSE, if set to TRUE then bacon() does not
 #'  print the summary of estimates/weights by type (e.g. Treated vs Untreated)
@@ -51,7 +52,7 @@ bacon <- function(formula,
                   id_var,
                   time_var, 
                   quietly = F,
-                  interact_var = "") {
+                  interact_var = NULL) {
   # Evaluate formula in data environment
   formula <- formula(terms
                      (formula, data = data))
